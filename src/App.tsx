@@ -1,11 +1,18 @@
-import React from 'react'
+import { AuthContextProvider } from './providers'
+import { Home, NewRoom } from './pages'
+import { BrowserRouter, Route } from 'react-router-dom'
+
 import './services/firebase'
+import './styles/global.scss'
 
 function App() {
   return (
-    <div className="App">
-      <h1>Jonas Superman</h1>
-    </div>
+    <BrowserRouter>
+      <AuthContextProvider>
+        <Route path='/' exact component={Home} />
+        <Route path='/rooms/new' component={NewRoom} />
+      </AuthContextProvider>
+    </BrowserRouter>
   );
 }
 
