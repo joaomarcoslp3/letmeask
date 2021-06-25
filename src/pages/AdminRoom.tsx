@@ -5,6 +5,8 @@ import { useAuth, useRoom } from '../hooks'
 import { database } from '../services/firebase'
 import logoImg from '../assets/images/logo.svg'
 import deleteImg from '../assets/images/delete.svg'
+import checkImg from '../assets/images/check.svg'
+import answerImg from '../assets/images/answer.svg'
 import { Button, RoomCode, Question } from '../components'
 
 type RoomParams = {
@@ -28,6 +30,14 @@ export const AdminRoom = () => {
   const history = useHistory()
   const roomId = params.id
   const { questions, title } = useRoom(roomId)
+
+  const handleCheckQuestionAnswered = async (questionId: string) => {
+    database.ref(`/rooms/${roomId}/questions/${questionId}`).update({ isAnswered: true })
+  }
+
+  const handleHighlightQuestion = async (questionId: string) => {
+    database.ref(`/rooms/${roomId}/questions/${questionId}`).update({ isHighlighted: true })
+  }
 
   const handleEndRoom = async () => {
     database.ref(`rooms/${roomId}`).update({
@@ -65,7 +75,23 @@ export const AdminRoom = () => {
 
         <div className='question-list'>
           {questions.map(question => (
-            <Question key={question.id} content={question.content} author={question.author}>
+            <Question 
+              key={question.id} 
+              content={question.content} 
+              author={question.author} 
+              isHighlighted={question.isHighlighted}
+              isAnswered={question.isAnswered}
+            >
+              {!question.isAnswered && (
+                <>
+                  <button type='button' onClick={() => handleCheckQuestionAnswered(question.id)}>
+                    <img src={checkImg} alt='Marcar pergunta como respondida' />
+                  </button>
+                  <button type='button' onClick={() => handleHighlightQuestion(question.id)}>
+                    <img src={answerImg} alt='Dar destaque à pergunta' />
+                  </button>
+                </>
+              )}
               <button type='button' onClick={() => handleDeleteQuestion(question.id)}>
                 <img src={deleteImg} alt='Remover pergunta' />
               </button>
